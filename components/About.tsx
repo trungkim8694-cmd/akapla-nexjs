@@ -42,7 +42,7 @@ const About: React.FC<Props> = ({ lang }) => {
         <div className="relative">
           <div className="rounded-2xl overflow-hidden shadow-2xl">
             <img
-              src="/JIS.png"
+              src="/jis.png"
               alt="Engineers working together"
               className="w-full h-auto"
             />
