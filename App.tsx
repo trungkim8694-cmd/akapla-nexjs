@@ -1,0 +1,1 @@
+// Redundant for Next.js App Router. Moved to app/page.tsx.

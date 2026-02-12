@@ -1,0 +1,233 @@
+module.exports = [
+"[externals]/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js [external] (next/dist/compiled/next-server/app-route-turbo.runtime.dev.js, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("next/dist/compiled/next-server/app-route-turbo.runtime.dev.js", () => require("next/dist/compiled/next-server/app-route-turbo.runtime.dev.js"));
+
+module.exports = mod;
+}),
+"[externals]/next/dist/compiled/next-server/app-page-turbo.runtime.dev.js [external] (next/dist/compiled/next-server/app-page-turbo.runtime.dev.js, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("next/dist/compiled/next-server/app-page-turbo.runtime.dev.js", () => require("next/dist/compiled/next-server/app-page-turbo.runtime.dev.js"));
+
+module.exports = mod;
+}),
+"[externals]/next/dist/server/app-render/work-unit-async-storage.external.js [external] (next/dist/server/app-render/work-unit-async-storage.external.js, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("next/dist/server/app-render/work-unit-async-storage.external.js", () => require("next/dist/server/app-render/work-unit-async-storage.external.js"));
+
+module.exports = mod;
+}),
+"[externals]/next/dist/server/app-render/work-async-storage.external.js [external] (next/dist/server/app-render/work-async-storage.external.js, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("next/dist/server/app-render/work-async-storage.external.js", () => require("next/dist/server/app-render/work-async-storage.external.js"));
+
+module.exports = mod;
+}),
+"[externals]/next/dist/shared/lib/no-fallback-error.external.js [external] (next/dist/shared/lib/no-fallback-error.external.js, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("next/dist/shared/lib/no-fallback-error.external.js", () => require("next/dist/shared/lib/no-fallback-error.external.js"));
+
+module.exports = mod;
+}),
+"[externals]/child_process [external] (child_process, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("child_process", () => require("child_process"));
+
+module.exports = mod;
+}),
+"[externals]/fs [external] (fs, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("fs", () => require("fs"));
+
+module.exports = mod;
+}),
+"[externals]/https [external] (https, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("https", () => require("https"));
+
+module.exports = mod;
+}),
+"[externals]/stream [external] (stream, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("stream", () => require("stream"));
+
+module.exports = mod;
+}),
+"[externals]/os [external] (os, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("os", () => require("os"));
+
+module.exports = mod;
+}),
+"[externals]/events [external] (events, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("events", () => require("events"));
+
+module.exports = mod;
+}),
+"[externals]/process [external] (process, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("process", () => require("process"));
+
+module.exports = mod;
+}),
+"[externals]/util [external] (util, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("util", () => require("util"));
+
+module.exports = mod;
+}),
+"[externals]/path [external] (path, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("path", () => require("path"));
+
+module.exports = mod;
+}),
+"[externals]/crypto [external] (crypto, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("crypto", () => require("crypto"));
+
+module.exports = mod;
+}),
+"[externals]/querystring [external] (querystring, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("querystring", () => require("querystring"));
+
+module.exports = mod;
+}),
+"[externals]/buffer [external] (buffer, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("buffer", () => require("buffer"));
+
+module.exports = mod;
+}),
+"[externals]/http2 [external] (http2, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("http2", () => require("http2"));
+
+module.exports = mod;
+}),
+"[externals]/zlib [external] (zlib, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("zlib", () => require("zlib"));
+
+module.exports = mod;
+}),
+"[externals]/url [external] (url, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("url", () => require("url"));
+
+module.exports = mod;
+}),
+"[externals]/next/dist/server/app-render/after-task-async-storage.external.js [external] (next/dist/server/app-render/after-task-async-storage.external.js, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("next/dist/server/app-render/after-task-async-storage.external.js", () => require("next/dist/server/app-render/after-task-async-storage.external.js"));
+
+module.exports = mod;
+}),
+"[project]/app/api/rfq/route.ts [app-route] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "POST",
+    ()=>POST
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$googleapis$2f$build$2f$src$2f$index$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/googleapis/build/src/index.js [app-route] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/server.js [app-route] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$externals$5d2f$firebase$2d$admin__$5b$external$5d$__$28$firebase$2d$admin$2c$__cjs$2c$__$5b$project$5d2f$node_modules$2f$firebase$2d$admin$29$__ = __turbopack_context__.i("[externals]/firebase-admin [external] (firebase-admin, cjs, [project]/node_modules/firebase-admin)");
+;
+;
+;
+// Khởi tạo Firebase Admin
+if (!__TURBOPACK__imported__module__$5b$externals$5d2f$firebase$2d$admin__$5b$external$5d$__$28$firebase$2d$admin$2c$__cjs$2c$__$5b$project$5d2f$node_modules$2f$firebase$2d$admin$29$__["default"].apps.length) {
+    const rawCredentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY || "{}");
+    if (rawCredentials.private_key) {
+        rawCredentials.private_key = rawCredentials.private_key.replace(/\\n/g, "\n");
+    }
+    __TURBOPACK__imported__module__$5b$externals$5d2f$firebase$2d$admin__$5b$external$5d$__$28$firebase$2d$admin$2c$__cjs$2c$__$5b$project$5d2f$node_modules$2f$firebase$2d$admin$29$__["default"].initializeApp({
+        credential: __TURBOPACK__imported__module__$5b$externals$5d2f$firebase$2d$admin__$5b$external$5d$__$28$firebase$2d$admin$2c$__cjs$2c$__$5b$project$5d2f$node_modules$2f$firebase$2d$admin$29$__["default"].credential.cert(rawCredentials),
+        // Đảm bảo FIREBASE_STORAGE_BUCKET trong .env không có gs://
+        storageBucket: process.env.FIREBASE_STORAGE_BUCKET?.replace("gs://", "")
+    });
+}
+const bucket = __TURBOPACK__imported__module__$5b$externals$5d2f$firebase$2d$admin__$5b$external$5d$__$28$firebase$2d$admin$2c$__cjs$2c$__$5b$project$5d2f$node_modules$2f$firebase$2d$admin$29$__["default"].storage().bucket();
+async function POST(req) {
+    try {
+        const formData = await req.formData();
+        const companyName = formData.get("companyName");
+        const contactEmail = formData.get("contactEmail");
+        const productType = formData.get("productType");
+        const notes = formData.get("notes");
+        const requestVisitOrPrototype = formData.get("requestVisitOrPrototype");
+        const file = formData.get("file");
+        let fileUrl = "No file uploaded";
+        // 1. Tải file lên Firebase Storage
+        if (file && file.size > 0) {
+            try {
+                const buffer = Buffer.from(await file.arrayBuffer());
+                // Tạo tên file an toàn để link không bị hỏng
+                const safeName = `${Date.now()}_${file.name.replace(/\s+/g, "_")}`;
+                const blob = bucket.file(`rfq_drawings/${safeName}`);
+                await blob.save(buffer, {
+                    contentType: file.type,
+                    public: true
+                });
+                // Link chuẩn Firebase để xem được ngay trong Sheets
+                fileUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(blob.name)}?alt=media`;
+            } catch (uploadError) {
+                console.error("Firebase Error:", uploadError.message);
+                fileUrl = "Upload failed: " + uploadError.message;
+            }
+        }
+        // 2. Ghi dữ liệu vào Google Sheets (Giữ nguyên logic cũ)
+        const rawCredentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY || "{}");
+        if (rawCredentials.private_key) {
+            rawCredentials.private_key = rawCredentials.private_key.replace(/\\n/g, "\n");
+        }
+        const auth = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$googleapis$2f$build$2f$src$2f$index$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["google"].auth.GoogleAuth({
+            credentials: rawCredentials,
+            scopes: [
+                "https://www.googleapis.com/auth/spreadsheets"
+            ]
+        });
+        const sheets = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$googleapis$2f$build$2f$src$2f$index$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["google"].sheets({
+            version: "v4",
+            auth
+        });
+        await sheets.spreadsheets.values.append({
+            spreadsheetId: process.env.GOOGLE_SHEET_ID,
+            range: "Sheet1!A:G",
+            valueInputOption: "USER_ENTERED",
+            requestBody: {
+                values: [
+                    [
+                        new Date().toLocaleString("ja-JP", {
+                            timeZone: "Asia/Tokyo"
+                        }),
+                        companyName || "",
+                        contactEmail || "",
+                        productType || "",
+                        requestVisitOrPrototype || "",
+                        notes || "",
+                        fileUrl
+                    ]
+                ]
+            }
+        });
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+            success: true
+        });
+    } catch (error) {
+        console.error("Critical Error:", error);
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+            success: false,
+            error: error.message
+        }, {
+            status: 500
+        });
+    }
+}
+}),
+];
+
+//# sourceMappingURL=%5Broot-of-the-server%5D__69a2c6d6._.js.map

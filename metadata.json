@@ -1,0 +1,7 @@
+{
+  "name": "Copy of Akapla - Industrial Supply Chain Bridge",
+  "description": "Professional B2B platform connecting Japanese technical standards with Vietnamese manufacturing excellence. Specializing in supply chain management, bridge engineering, and industrial sourcing.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
