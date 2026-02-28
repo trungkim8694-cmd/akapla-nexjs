@@ -38,14 +38,14 @@ const Hero: React.FC<Props> = ({ lang }) => {
               {t.btnStart}
             </a>
             <a
-              href="/company-profile.pdf" // Đường dẫn file PDF của bạn
-              download="Akapla_Company_Profile.pdf" // Tên file khi tải về
+              href="/company-profile.pdf" // Thay bằng link file của bạn
+              download="Akapla_Company_Profile.pdf"                
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-6 py-3 bg-white text-black rounded-full font-bold hover:bg-gray-200 transition"
+              className="flex items-center justify-center gap-3 px-10 py-4 bg-white text-blue-900 font-bold rounded-lg text-center hover:bg-slate-100 transition-colors w-full md:max-w-xs"
             >
-              {/* Icon PDF */}
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-600" viewBox="0 0 20 20" fill="currentColor">
+              {/* Icon PDF - Màu đỏ nổi bật trên nền trắng */}
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-600" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
               </svg>
               {t.btnService}

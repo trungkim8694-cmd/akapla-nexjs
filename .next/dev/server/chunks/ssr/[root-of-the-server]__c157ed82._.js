@@ -26,7 +26,7 @@ const translations = {
             title2: "ベトナムの製造力で。",
             desc: "Akaplaは、日本の厳格な技術基準とベトナムのコスト効率の高い大規模製造インフラを繋ぎます。次世代の信頼できる産業サプライチェーン管理を提供します。",
             btnStart: "RFQを開始する",
-            btnService: "会社案内PDF"
+            btnService: "会社案内PDFダウンロード"
         },
         about: {
             tag: "Akaplaについて",
@@ -173,7 +173,7 @@ const translations = {
             title2: "Vietnamese Production.",
             desc: "Akapla bridges Japan's rigorous technical standards with Vietnam's cost-efficient manufacturing infrastructure. Reliable Supply Chain Management for the future.",
             btnStart: "Start RFQ",
-            btnService: "Company Profile PDF"
+            btnService: "Company Profile PDF Download"
         },
         about: {
             tag: "About Akapla",
@@ -320,7 +320,7 @@ const translations = {
             title2: "Sản xuất tại Việt Nam.",
             desc: "Akapla kết nối tiêu chuẩn kỹ thuật khắt khe của Nhật Bản với hạ tầng sản xuất chi phí tối ưu của Việt Nam. Quản lý chuỗi cung ứng công nghiệp tin cậy cho tương lai.",
             btnStart: "Bắt đầu RFQ",
-            btnService: "Hồ sơ công ty (PDF)"
+            btnService: "Tải xuống hồ sơ công ty (PDF)"
         },
         about: {
             tag: "Về Akapla",
@@ -730,11 +730,11 @@ const Hero = ({ lang })=>{
                                     download: "Akapla_Company_Profile.pdf",
                                     target: "_blank",
                                     rel: "noopener noreferrer",
-                                    className: "flex items-center gap-2 px-6 py-3 bg-white text-black rounded-full font-bold hover:bg-gray-200 transition",
+                                    className: "flex items-center justify-center gap-3 px-10 py-4 bg-white text-blue-900 font-bold rounded-lg text-center hover:bg-slate-100 transition-colors w-full md:max-w-xs",
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
                                             xmlns: "http://www.w3.org/2000/svg",
-                                            className: "h-5 w-5 text-red-600",
+                                            className: "h-6 w-6 text-red-600",
                                             viewBox: "0 0 20 20",
                                             fill: "currentColor",
                                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {

@@ -15,7 +15,7 @@ export const translations = {
       title2: "ベトナムの製造力で。",
       desc: "Akaplaは、日本の厳格な技術基準とベトナムのコスト効率の高い大規模製造インフラを繋ぎます。次世代の信頼できる産業サプライチェーン管理を提供します。",
       btnStart: "RFQを開始する",
-      btnService: "会社案内PDF"
+      btnService: "会社案内PDFダウンロード"
     },
     about: {
       tag: "Akaplaについて",
@@ -101,7 +101,7 @@ export const translations = {
       title2: "Vietnamese Production.",
       desc: "Akapla bridges Japan's rigorous technical standards with Vietnam's cost-efficient manufacturing infrastructure. Reliable Supply Chain Management for the future.",
       btnStart: "Start RFQ",
-      btnService: "Company Profile PDF"
+      btnService: "Company Profile PDF Download"
     },
     about: {
       tag: "About Akapla",
@@ -187,7 +187,7 @@ export const translations = {
       title2: "Sản xuất tại Việt Nam.",
       desc: "Akapla kết nối tiêu chuẩn kỹ thuật khắt khe của Nhật Bản với hạ tầng sản xuất chi phí tối ưu của Việt Nam. Quản lý chuỗi cung ứng công nghiệp tin cậy cho tương lai.",
       btnStart: "Bắt đầu RFQ",
-      btnService: "Hồ sơ công ty (PDF)"
+      btnService: "Tải xuống hồ sơ công ty (PDF)"
     },
     about: {
       tag: "Về Akapla",
