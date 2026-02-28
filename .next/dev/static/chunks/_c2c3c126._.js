@@ -20,7 +20,7 @@ const translations = {
             title2: "ベトナムの製造力で。",
             desc: "Akaplaは、日本の厳格な技術基準とベトナムのコスト効率の高い大規模製造インフラを繋ぎます。次世代の信頼できる産業サプライチェーン管理を提供します。",
             btnStart: "RFQを開始する",
-            btnService: "サービス紹介"
+            btnService: "会社案内PDF"
         },
         about: {
             tag: "Akaplaについて",
@@ -167,7 +167,7 @@ const translations = {
             title2: "Vietnamese Production.",
             desc: "Akapla bridges Japan's rigorous technical standards with Vietnam's cost-efficient manufacturing infrastructure. Reliable Supply Chain Management for the future.",
             btnStart: "Start RFQ",
-            btnService: "Our Services"
+            btnService: "Company Profile PDF"
         },
         about: {
             tag: "About Akapla",
@@ -314,7 +314,7 @@ const translations = {
             title2: "Sản xuất tại Việt Nam.",
             desc: "Akapla kết nối tiêu chuẩn kỹ thuật khắt khe của Nhật Bản với hạ tầng sản xuất chi phí tối ưu của Việt Nam. Quản lý chuỗi cung ứng công nghiệp tin cậy cho tương lai.",
             btnStart: "Bắt đầu RFQ",
-            btnService: "Dịch vụ của chúng tôi"
+            btnService: "Hồ sơ công ty (PDF)"
         },
         about: {
             tag: "Về Akapla",
@@ -738,10 +738,34 @@ const Hero = ({ lang })=>{
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
-                                    href: "#process",
-                                    className: "px-10 py-4 border-2 border-white/30 text-white font-bold rounded-lg text-center hover:bg-white/10 transition-colors",
-                                    children: t.btnService
-                                }, void 0, false, {
+                                    href: "/company-profile.pdf",
+                                    download: "Akapla_Company_Profile.pdf",
+                                    target: "_blank",
+                                    rel: "noopener noreferrer",
+                                    className: "flex items-center gap-2 px-6 py-3 bg-white text-black rounded-full font-bold hover:bg-gray-200 transition",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+                                            xmlns: "http://www.w3.org/2000/svg",
+                                            className: "h-5 w-5 text-red-600",
+                                            viewBox: "0 0 20 20",
+                                            fill: "currentColor",
+                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                                                fillRule: "evenodd",
+                                                d: "M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z",
+                                                clipRule: "evenodd"
+                                            }, void 0, false, {
+                                                fileName: "[project]/components/Hero.tsx",
+                                                lineNumber: 49,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0))
+                                        }, void 0, false, {
+                                            fileName: "[project]/components/Hero.tsx",
+                                            lineNumber: 48,
+                                            columnNumber: 15
+                                        }, ("TURBOPACK compile-time value", void 0)),
+                                        t.btnService
+                                    ]
+                                }, void 0, true, {
                                     fileName: "[project]/components/Hero.tsx",
                                     lineNumber: 40,
                                     columnNumber: 13
@@ -769,12 +793,12 @@ const Hero = ({ lang })=>{
                     className: "w-1 h-12 bg-gradient-to-b from-white to-transparent rounded-full"
                 }, void 0, false, {
                     fileName: "[project]/components/Hero.tsx",
-                    lineNumber: 51,
+                    lineNumber: 58,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/components/Hero.tsx",
-                lineNumber: 50,
+                lineNumber: 57,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0))
         ]
@@ -2097,8 +2121,8 @@ const Footer = ({ lang })=>{
     const t = __TURBOPACK__imported__module__$5b$project$5d2f$translations$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["translations"][lang].footer;
     const navT = __TURBOPACK__imported__module__$5b$project$5d2f$translations$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["translations"][lang].nav;
     // Specific emails from user request
-    const vnEmail = "trungkim8694@gmail.com";
-    const jpEmail = "tqcjapan2022@gmail.com";
+    const vnEmail = "info@aka-pla.com";
+    const jpEmail = "";
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("footer", {
         className: "bg-slate-900 text-slate-400 py-20 border-t border-white/5",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {

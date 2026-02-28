@@ -10,8 +10,8 @@ const Footer: React.FC<Props> = ({ lang }) => {
   const navT = translations[lang].nav;
 
   // Specific emails from user request
-  const vnEmail = "trungkim8694@gmail.com";
-  const jpEmail = "tqcjapan2022@gmail.com";
+  const vnEmail = "info@aka-pla.com";
+  const jpEmail = "";
 
   return (
     <footer className="bg-slate-900 text-slate-400 py-20 border-t border-white/5">
