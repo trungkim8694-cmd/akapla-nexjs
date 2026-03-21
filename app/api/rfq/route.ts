@@ -92,8 +92,8 @@ export async function POST(req: Request) {
           <p>${companyName} 様</p>
           <p>お問い合わせありがとうございます。内容を確認し、担当者よりご連絡いたします。</p>
           <div style="background: #f9fafb; padding: 15px; border-radius: 8px;">
-            <p><strong>Sản phẩm:</strong> ${productType}</p>
-            <p><strong>Số lượng file đã gửi:</strong> ${fileUrls.length}</p>
+            <p><strong>product:</strong> ${productType}</p>
+            <p><strong>number of files sent:</strong> ${fileUrls.length}</p>
           </div>
           <p style="font-size: 12px; color: #666; margin-top: 20px;">※本メール là tự động gửi.</p>
         </div>

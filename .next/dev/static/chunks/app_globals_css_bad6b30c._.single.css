@@ -675,10 +675,6 @@
     min-height: calc(var(--spacing) * 100);
   }
 
-  .min-h-\[400px\] {
-    min-height: 400px;
-  }
-
   .min-h-screen {
     min-height: 100vh;
   }
@@ -782,10 +778,6 @@
 
   .justify-end {
     justify-content: flex-end;
-  }
-
-  .gap-1 {
-    gap: calc(var(--spacing) * 1);
   }
 
   .gap-3 {
@@ -1361,10 +1353,6 @@
     opacity: .4;
   }
 
-  .opacity-50 {
-    opacity: .5;
-  }
-
   .opacity-70 {
     opacity: .7;
   }
@@ -1523,13 +1511,6 @@
 
   .file\:text-white::file-selector-button {
     color: var(--color-white);
-  }
-
-  @media (hover: hover) {
-    .hover\:-translate-y-1:hover {
-      --tw-translate-y: calc(var(--spacing) * -1);
-      translate: var(--tw-translate-x) var(--tw-translate-y);
-    }
   }
 
   @media (hover: hover) {
