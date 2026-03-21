@@ -1,8 +1,16 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { createClient } from "@supabase/supabase-js"; // Thêm SDK này
 import { AppStatus, RFQFormData } from "../types";
 import { Language, translations } from "../translations";
+
+// Khởi tạo Supabase Client cho Frontend
+// Lưu ý: Biến NEXT_PUBLIC_SUPABASE_ANON_KEY phải có trong file .env của bạn
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+);
 
 interface Props {
   lang: Language;
@@ -30,7 +38,8 @@ const RFQForm: React.FC<Props> = ({ lang }) => {
     setMounted(true);
   }, []);
 
-  const MAX_FILE_SIZE = 100 * 1024 * 1024; // Giới hạn 100MB để an toàn
+  // Giới hạn 50MB mỗi file (Supabase hỗ trợ tốt mức này)
+  const MAX_FILE_SIZE = 50 * 1024 * 1024;
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -50,7 +59,7 @@ const RFQForm: React.FC<Props> = ({ lang }) => {
       const oversized = files.find((f) => f.size > MAX_FILE_SIZE);
 
       if (oversized) {
-        setErrorMsg(t.fileError || "File quá lớn (Tối đa 100MB)");
+        setErrorMsg("Có file vượt quá 50MB. Vui lòng kiểm tra lại.");
         e.target.value = "";
         return;
       }
@@ -58,11 +67,8 @@ const RFQForm: React.FC<Props> = ({ lang }) => {
     }
   };
 
-  // Hàm làm sạch tên file để tránh lỗi "Invalid key" của Supabase Storage
   const sanitizeFileName = (name: string) => {
-    return name
-      .replace(/\s+/g, "_") // Thay khoảng trắng bằng gạch dưới
-      .replace(/[^a-zA-Z0-9._-]/g, ""); // Loại bỏ ký tự đặc biệt như [ ], Japanese chars nếu cần
+    return name.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9._-]/g, "");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -70,27 +76,41 @@ const RFQForm: React.FC<Props> = ({ lang }) => {
     setStatus(AppStatus.SUBMITTING);
     setErrorMsg(null);
 
+    const uploadedUrls: string[] = [];
+
     try {
-      const body = new FormData();
-      body.append("companyName", formData.companyName || "");
-      body.append("contactEmail", formData.contactEmail || "");
-      body.append("productType", formData.productType || "");
-      body.append(
-        "requestVisitOrPrototype",
-        formData.requestVisitOrPrototype || "",
-      );
-      body.append("notes", formData.notes || "");
+      // --- BƯỚC 1: UPLOAD TRỰC TIẾP LÊN SUPABASE TỪ CLIENT ---
+      if (selectedFiles.length > 0) {
+        for (const file of selectedFiles) {
+          const safeName = sanitizeFileName(file.name);
+          const filePath = `rfq_drawings/${Date.now()}_${safeName}`;
 
-      // Xử lý từng file với tên đã được làm sạch
-      selectedFiles.forEach((file) => {
-        const safeName = sanitizeFileName(file.name);
-        const safeFile = new File([file], safeName, { type: file.type });
-        body.append("files", safeFile);
-      });
+          const { data, error: uploadError } = await supabase.storage
+            .from("drawings")
+            .upload(filePath, file, {
+              cacheControl: "3600",
+              upsert: false,
+            });
 
+          if (uploadError) throw new Error(`Lỗi upload: ${file.name}`);
+
+          // Lấy Public URL
+          const {
+            data: { publicUrl },
+          } = supabase.storage.from("drawings").getPublicUrl(filePath);
+
+          uploadedUrls.push(publicUrl);
+        }
+      }
+
+      // --- BƯỚC 2: GỬI DỮ LIỆU TEXT VÀ LINK SANG API ROUTE ---
       const response = await fetch("/api/rfq", {
         method: "POST",
-        body: body,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          fileUrl: uploadedUrls.join(", "), // Gửi chuỗi link thay vì file thô
+        }),
       });
 
       if (!response.ok) {
@@ -99,6 +119,7 @@ const RFQForm: React.FC<Props> = ({ lang }) => {
       }
 
       setStatus(AppStatus.SUCCESS);
+      setSelectedFiles([]);
     } catch (err: any) {
       console.error("RFQ Error:", err);
       setStatus(AppStatus.ERROR);
@@ -108,6 +129,7 @@ const RFQForm: React.FC<Props> = ({ lang }) => {
 
   if (!mounted) return <div className="min-h-100" />;
 
+  // Hàm render label NDA giữ nguyên logic cũ của bạn
   const renderNdaLabel = () => {
     const labelText = t.labels.nda;
     const ndaKeywords = {
@@ -115,7 +137,8 @@ const RFQForm: React.FC<Props> = ({ lang }) => {
       EN: "confidentiality terms (NDA)",
       VN: "điều khoản bảo mật (NDA)",
     };
-    const keyword = ndaKeywords[lang];
+    const keyword =
+      ndaKeywords[lang as keyof typeof ndaKeywords] || ndaKeywords.JP;
     if (labelText.includes(keyword)) {
       const parts = labelText.split(keyword);
       return (
@@ -231,11 +254,12 @@ const RFQForm: React.FC<Props> = ({ lang }) => {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-400 uppercase mb-2">
-                    {t.labels.file}
+                    {t.labels.file} (PDF, DWG, DXF, STEP, STP, JPG, JPEG, PNG)
                   </label>
                   <input
                     type="file"
                     multiple
+                    accept=".pdf,.dwg,.dxf,.step,.stp,.jpg,.jpeg,.png"
                     onChange={handleFileChange}
                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm file:bg-blue-500 file:text-white file:border-0 file:rounded-full file:px-4 cursor-pointer"
                   />
@@ -293,7 +317,7 @@ const RFQForm: React.FC<Props> = ({ lang }) => {
         </div>
       </div>
 
-      {/* NDA Modal giữ nguyên như code cũ của bạn */}
+      {/* Modal NDA giữ nguyên */}
       {isModalOpen && (
         <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="bg-white text-slate-900 w-full max-w-2xl max-h-[85vh] overflow-hidden rounded-2xl flex flex-col">
@@ -312,7 +336,7 @@ const RFQForm: React.FC<Props> = ({ lang }) => {
               <p>
                 Akapla（以下「当社」）は、提供された秘密情報を厳重に管理することを合意いたします...
               </p>
-              {/* Nội dung NDA chi tiết giữ nguyên */}
+              {/* Nội dung chi tiết */}
             </div>
             <div className="p-6 bg-slate-50 border-t flex justify-end">
               <button

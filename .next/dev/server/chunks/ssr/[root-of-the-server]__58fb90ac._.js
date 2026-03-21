@@ -1370,6 +1370,7 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$supabase$2f$supabase$2d$js$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/node_modules/@supabase/supabase-js/dist/index.mjs [app-ssr] (ecmascript) <locals>"); // Thêm SDK này
 var __TURBOPACK__imported__module__$5b$project$5d2f$types$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/types.ts [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$translations$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/translations.ts [app-ssr] (ecmascript)");
 "use client";
@@ -1377,6 +1378,10 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$translations$2e$ts__$5b$app$
 ;
 ;
 ;
+;
+// Khởi tạo Supabase Client cho Frontend
+// Lưu ý: Biến NEXT_PUBLIC_SUPABASE_ANON_KEY phải có trong file .env của bạn
+const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$supabase$2f$supabase$2d$js$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$locals$3e$__["createClient"])(("TURBOPACK compile-time value", "https://mkswqmhzjpaozgqetsrr.supabase.co"), ("TURBOPACK compile-time value", "sb_publishable_q1BaaYQzC31LaoOEphPR7g_qF_7-VCL"));
 const RFQForm = ({ lang })=>{
     const t = __TURBOPACK__imported__module__$5b$project$5d2f$translations$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["translations"][lang].rfq;
     const [status, setStatus] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(__TURBOPACK__imported__module__$5b$project$5d2f$types$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AppStatus"].IDLE);
@@ -1395,7 +1400,8 @@ const RFQForm = ({ lang })=>{
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         setMounted(true);
     }, []);
-    const MAX_FILE_SIZE = 100 * 1024 * 1024; // Giới hạn 100MB để an toàn
+    // Giới hạn 50MB mỗi file (Supabase hỗ trợ tốt mức này)
+    const MAX_FILE_SIZE = 50 * 1024 * 1024;
     const handleInputChange = (e)=>{
         const { name, value, type } = e.target;
         const val = type === "checkbox" ? e.target.checked : value;
@@ -1410,48 +1416,54 @@ const RFQForm = ({ lang })=>{
             const files = Array.from(e.target.files);
             const oversized = files.find((f)=>f.size > MAX_FILE_SIZE);
             if (oversized) {
-                setErrorMsg(t.fileError || "File quá lớn (Tối đa 100MB)");
+                setErrorMsg("Có file vượt quá 50MB. Vui lòng kiểm tra lại.");
                 e.target.value = "";
                 return;
             }
             setSelectedFiles(files);
         }
     };
-    // Hàm làm sạch tên file để tránh lỗi "Invalid key" của Supabase Storage
     const sanitizeFileName = (name)=>{
-        return name.replace(/\s+/g, "_") // Thay khoảng trắng bằng gạch dưới
-        .replace(/[^a-zA-Z0-9._-]/g, ""); // Loại bỏ ký tự đặc biệt như [ ], Japanese chars nếu cần
+        return name.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9._-]/g, "");
     };
     const handleSubmit = async (e)=>{
         e.preventDefault();
         setStatus(__TURBOPACK__imported__module__$5b$project$5d2f$types$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AppStatus"].SUBMITTING);
         setErrorMsg(null);
+        const uploadedUrls = [];
         try {
-            const body = new FormData();
-            body.append("companyName", formData.companyName || "");
-            body.append("contactEmail", formData.contactEmail || "");
-            body.append("productType", formData.productType || "");
-            body.append("requestVisitOrPrototype", formData.requestVisitOrPrototype || "");
-            body.append("notes", formData.notes || "");
-            // Xử lý từng file với tên đã được làm sạch
-            selectedFiles.forEach((file)=>{
-                const safeName = sanitizeFileName(file.name);
-                const safeFile = new File([
-                    file
-                ], safeName, {
-                    type: file.type
-                });
-                body.append("files", safeFile);
-            });
+            // --- BƯỚC 1: UPLOAD TRỰC TIẾP LÊN SUPABASE TỪ CLIENT ---
+            if (selectedFiles.length > 0) {
+                for (const file of selectedFiles){
+                    const safeName = sanitizeFileName(file.name);
+                    const filePath = `rfq_drawings/${Date.now()}_${safeName}`;
+                    const { data, error: uploadError } = await supabase.storage.from("drawings").upload(filePath, file, {
+                        cacheControl: "3600",
+                        upsert: false
+                    });
+                    if (uploadError) throw new Error(`Lỗi upload: ${file.name}`);
+                    // Lấy Public URL
+                    const { data: { publicUrl } } = supabase.storage.from("drawings").getPublicUrl(filePath);
+                    uploadedUrls.push(publicUrl);
+                }
+            }
+            // --- BƯỚC 2: GỬI DỮ LIỆU TEXT VÀ LINK SANG API ROUTE ---
             const response = await fetch("/api/rfq", {
                 method: "POST",
-                body: body
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    ...formData,
+                    fileUrl: uploadedUrls.join(", ")
+                })
             });
             if (!response.ok) {
                 const result = await response.json();
                 throw new Error(result.error || "Submission failed");
             }
             setStatus(__TURBOPACK__imported__module__$5b$project$5d2f$types$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AppStatus"].SUCCESS);
+            setSelectedFiles([]);
         } catch (err) {
             console.error("RFQ Error:", err);
             setStatus(__TURBOPACK__imported__module__$5b$project$5d2f$types$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AppStatus"].ERROR);
@@ -1462,9 +1474,10 @@ const RFQForm = ({ lang })=>{
         className: "min-h-100"
     }, void 0, false, {
         fileName: "[project]/components/RFQForm.tsx",
-        lineNumber: 109,
+        lineNumber: 130,
         columnNumber: 24
     }, ("TURBOPACK compile-time value", void 0));
+    // Hàm render label NDA giữ nguyên logic cũ của bạn
     const renderNdaLabel = ()=>{
         const labelText = t.labels.nda;
         const ndaKeywords = {
@@ -1472,7 +1485,7 @@ const RFQForm = ({ lang })=>{
             EN: "confidentiality terms (NDA)",
             VN: "điều khoản bảo mật (NDA)"
         };
-        const keyword = ndaKeywords[lang];
+        const keyword = ndaKeywords[lang] || ndaKeywords.JP;
         if (labelText.includes(keyword)) {
             const parts = labelText.split(keyword);
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -1485,7 +1498,7 @@ const RFQForm = ({ lang })=>{
                         children: keyword
                     }, void 0, false, {
                         fileName: "[project]/components/RFQForm.tsx",
-                        lineNumber: 124,
+                        lineNumber: 147,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0)),
                     parts[1]
@@ -1504,7 +1517,7 @@ const RFQForm = ({ lang })=>{
                         className: "absolute top-0 right-0 w-64 h-64 bg-red-600/10 rounded-full blur-3xl -mr-32 -mt-32"
                     }, void 0, false, {
                         fileName: "[project]/components/RFQForm.tsx",
-                        lineNumber: 141,
+                        lineNumber: 164,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1518,7 +1531,7 @@ const RFQForm = ({ lang })=>{
                                         children: t.title
                                     }, void 0, false, {
                                         fileName: "[project]/components/RFQForm.tsx",
-                                        lineNumber: 144,
+                                        lineNumber: 167,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1526,13 +1539,13 @@ const RFQForm = ({ lang })=>{
                                         children: t.desc
                                     }, void 0, false, {
                                         fileName: "[project]/components/RFQForm.tsx",
-                                        lineNumber: 145,
+                                        lineNumber: 168,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/RFQForm.tsx",
-                                lineNumber: 143,
+                                lineNumber: 166,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -1546,14 +1559,14 @@ const RFQForm = ({ lang })=>{
                                             children: t.labels.successTitle
                                         }, void 0, false, {
                                             fileName: "[project]/components/RFQForm.tsx",
-                                            lineNumber: 151,
+                                            lineNumber: 174,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                             children: t.labels.successDesc
                                         }, void 0, false, {
                                             fileName: "[project]/components/RFQForm.tsx",
-                                            lineNumber: 154,
+                                            lineNumber: 177,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1563,13 +1576,13 @@ const RFQForm = ({ lang })=>{
                                             children: t.labels.reset
                                         }, void 0, false, {
                                             fileName: "[project]/components/RFQForm.tsx",
-                                            lineNumber: 155,
+                                            lineNumber: 178,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/RFQForm.tsx",
-                                    lineNumber: 150,
+                                    lineNumber: 173,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                                     children: [
@@ -1583,7 +1596,7 @@ const RFQForm = ({ lang })=>{
                                                             children: t.labels.company
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/RFQForm.tsx",
-                                                            lineNumber: 167,
+                                                            lineNumber: 190,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1593,13 +1606,13 @@ const RFQForm = ({ lang })=>{
                                                             className: "w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:border-blue-500 outline-none"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/RFQForm.tsx",
-                                                            lineNumber: 170,
+                                                            lineNumber: 193,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/RFQForm.tsx",
-                                                    lineNumber: 166,
+                                                    lineNumber: 189,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1609,7 +1622,7 @@ const RFQForm = ({ lang })=>{
                                                             children: t.labels.email
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/RFQForm.tsx",
-                                                            lineNumber: 178,
+                                                            lineNumber: 201,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1620,19 +1633,19 @@ const RFQForm = ({ lang })=>{
                                                             className: "w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:border-blue-500 outline-none"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/RFQForm.tsx",
-                                                            lineNumber: 181,
+                                                            lineNumber: 204,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/RFQForm.tsx",
-                                                    lineNumber: 177,
+                                                    lineNumber: 200,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/RFQForm.tsx",
-                                            lineNumber: 165,
+                                            lineNumber: 188,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1645,7 +1658,7 @@ const RFQForm = ({ lang })=>{
                                                             children: t.labels.category
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/RFQForm.tsx",
-                                                            lineNumber: 193,
+                                                            lineNumber: 216,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -1659,7 +1672,7 @@ const RFQForm = ({ lang })=>{
                                                                     children: "Select"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/RFQForm.tsx",
-                                                                    lineNumber: 201,
+                                                                    lineNumber: 224,
                                                                     columnNumber: 23
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 t.categories.map((cat)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1668,19 +1681,19 @@ const RFQForm = ({ lang })=>{
                                                                         children: cat
                                                                     }, cat, false, {
                                                                         fileName: "[project]/components/RFQForm.tsx",
-                                                                        lineNumber: 205,
+                                                                        lineNumber: 228,
                                                                         columnNumber: 25
                                                                     }, ("TURBOPACK compile-time value", void 0)))
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/components/RFQForm.tsx",
-                                                            lineNumber: 196,
+                                                            lineNumber: 219,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/RFQForm.tsx",
-                                                    lineNumber: 192,
+                                                    lineNumber: 215,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1690,7 +1703,7 @@ const RFQForm = ({ lang })=>{
                                                             children: t.labels.visitRequest
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/RFQForm.tsx",
-                                                            lineNumber: 212,
+                                                            lineNumber: 235,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -1704,7 +1717,7 @@ const RFQForm = ({ lang })=>{
                                                                     children: "Select Option"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/RFQForm.tsx",
-                                                                    lineNumber: 220,
+                                                                    lineNumber: 243,
                                                                     columnNumber: 23
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 t.visitOptions.map((opt)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1713,45 +1726,49 @@ const RFQForm = ({ lang })=>{
                                                                         children: opt
                                                                     }, opt, false, {
                                                                         fileName: "[project]/components/RFQForm.tsx",
-                                                                        lineNumber: 224,
+                                                                        lineNumber: 247,
                                                                         columnNumber: 25
                                                                     }, ("TURBOPACK compile-time value", void 0)))
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/components/RFQForm.tsx",
-                                                            lineNumber: 215,
+                                                            lineNumber: 238,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/RFQForm.tsx",
-                                                    lineNumber: 211,
+                                                    lineNumber: 234,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/RFQForm.tsx",
-                                            lineNumber: 191,
+                                            lineNumber: 214,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             children: [
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                                     className: "block text-xs font-bold text-slate-400 uppercase mb-2",
-                                                    children: t.labels.file
-                                                }, void 0, false, {
+                                                    children: [
+                                                        t.labels.file,
+                                                        " (PDF, DWG, DXF, STEP, STP, JPG, JPEG, PNG)"
+                                                    ]
+                                                }, void 0, true, {
                                                     fileName: "[project]/components/RFQForm.tsx",
-                                                    lineNumber: 233,
+                                                    lineNumber: 256,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                                     type: "file",
                                                     multiple: true,
+                                                    accept: ".pdf,.dwg,.dxf,.step,.stp,.jpg,.jpeg,.png",
                                                     onChange: handleFileChange,
                                                     className: "w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm file:bg-blue-500 file:text-white file:border-0 file:rounded-full file:px-4 cursor-pointer"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/RFQForm.tsx",
-                                                    lineNumber: 236,
+                                                    lineNumber: 259,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 selectedFiles.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1767,12 +1784,12 @@ const RFQForm = ({ lang })=>{
                                                             ]
                                                         }, i, true, {
                                                             fileName: "[project]/components/RFQForm.tsx",
-                                                            lineNumber: 245,
+                                                            lineNumber: 269,
                                                             columnNumber: 25
                                                         }, ("TURBOPACK compile-time value", void 0)))
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/RFQForm.tsx",
-                                                    lineNumber: 243,
+                                                    lineNumber: 267,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 errorMsg && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1780,13 +1797,13 @@ const RFQForm = ({ lang })=>{
                                                     children: errorMsg
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/RFQForm.tsx",
-                                                    lineNumber: 252,
+                                                    lineNumber: 276,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/RFQForm.tsx",
-                                            lineNumber: 232,
+                                            lineNumber: 255,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1796,7 +1813,7 @@ const RFQForm = ({ lang })=>{
                                                     children: t.labels.notes
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/RFQForm.tsx",
-                                                    lineNumber: 257,
+                                                    lineNumber: 281,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("textarea", {
@@ -1806,13 +1823,13 @@ const RFQForm = ({ lang })=>{
                                                     className: "w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:border-blue-500 outline-none"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/RFQForm.tsx",
-                                                    lineNumber: 260,
+                                                    lineNumber: 284,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/RFQForm.tsx",
-                                            lineNumber: 256,
+                                            lineNumber: 280,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1827,7 +1844,7 @@ const RFQForm = ({ lang })=>{
                                                     required: true
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/RFQForm.tsx",
-                                                    lineNumber: 269,
+                                                    lineNumber: 293,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
@@ -1836,13 +1853,13 @@ const RFQForm = ({ lang })=>{
                                                     children: renderNdaLabel()
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/RFQForm.tsx",
-                                                    lineNumber: 277,
+                                                    lineNumber: 301,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/RFQForm.tsx",
-                                            lineNumber: 268,
+                                            lineNumber: 292,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1851,26 +1868,26 @@ const RFQForm = ({ lang })=>{
                                             children: status === __TURBOPACK__imported__module__$5b$project$5d2f$types$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AppStatus"].SUBMITTING ? t.labels.sending : t.labels.submit
                                         }, void 0, false, {
                                             fileName: "[project]/components/RFQForm.tsx",
-                                            lineNumber: 282,
+                                            lineNumber: 306,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true)
                             }, void 0, false, {
                                 fileName: "[project]/components/RFQForm.tsx",
-                                lineNumber: 148,
+                                lineNumber: 171,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/RFQForm.tsx",
-                        lineNumber: 142,
+                        lineNumber: 165,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/RFQForm.tsx",
-                lineNumber: 140,
+                lineNumber: 163,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             isModalOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1886,7 +1903,7 @@ const RFQForm = ({ lang })=>{
                                     children: "秘密保持合意書 (NDA)"
                                 }, void 0, false, {
                                     fileName: "[project]/components/RFQForm.tsx",
-                                    lineNumber: 301,
+                                    lineNumber: 325,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1895,13 +1912,13 @@ const RFQForm = ({ lang })=>{
                                     children: "✕"
                                 }, void 0, false, {
                                     fileName: "[project]/components/RFQForm.tsx",
-                                    lineNumber: 304,
+                                    lineNumber: 328,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/RFQForm.tsx",
-                            lineNumber: 300,
+                            lineNumber: 324,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1910,12 +1927,12 @@ const RFQForm = ({ lang })=>{
                                 children: "Akapla（以下「当社」）は、提供された秘密情報を厳重に管理することを合意いたします..."
                             }, void 0, false, {
                                 fileName: "[project]/components/RFQForm.tsx",
-                                lineNumber: 312,
+                                lineNumber: 336,
                                 columnNumber: 15
                             }, ("TURBOPACK compile-time value", void 0))
                         }, void 0, false, {
                             fileName: "[project]/components/RFQForm.tsx",
-                            lineNumber: 311,
+                            lineNumber: 335,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1926,29 +1943,29 @@ const RFQForm = ({ lang })=>{
                                 children: "閉じる"
                             }, void 0, false, {
                                 fileName: "[project]/components/RFQForm.tsx",
-                                lineNumber: 318,
+                                lineNumber: 342,
                                 columnNumber: 15
                             }, ("TURBOPACK compile-time value", void 0))
                         }, void 0, false, {
                             fileName: "[project]/components/RFQForm.tsx",
-                            lineNumber: 317,
+                            lineNumber: 341,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/RFQForm.tsx",
-                    lineNumber: 299,
+                    lineNumber: 323,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/components/RFQForm.tsx",
-                lineNumber: 298,
+                lineNumber: 322,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/components/RFQForm.tsx",
-        lineNumber: 139,
+        lineNumber: 162,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };

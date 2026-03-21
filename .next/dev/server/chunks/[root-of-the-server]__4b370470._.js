@@ -138,42 +138,14 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$nodemailer$2
 ;
 ;
 ;
+// Khởi tạo Supabase Client cho Backend (Dùng SERVICE ROLE KEY để ghi vào DB)
 const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$supabase$2f$supabase$2d$js$2f$dist$2f$index$2e$mjs__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__["createClient"])(("TURBOPACK compile-time value", "https://mkswqmhzjpaozgqetsrr.supabase.co"), process.env.SUPABASE_SERVICE_ROLE_KEY);
 async function POST(req) {
     try {
-        const formData = await req.formData();
-        const companyName = formData.get("companyName");
-        const contactEmail = formData.get("contactEmail");
-        const productType = formData.get("productType");
-        const notes = formData.get("notes");
-        const requestVisitOrPrototype = formData.get("requestVisitOrPrototype");
-        // --- 1. LẤY TẤT CẢ FILE (Dùng getAll thay vì get) ---
-        const files = formData.getAll("files");
-        const fileUrls = [];
-        // --- 2. VÒNG LẶP TẢI TỪNG FILE LÊN SUPABASE ---
-        if (files && files.length > 0) {
-            for (const file of files){
-                if (file.size === 0) continue;
-                const buffer = Buffer.from(await file.arrayBuffer());
-                // Làm sạch tên file
-                const safeName = file.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9.]/g, "_").replace(/_{2,}/g, "_");
-                const fileName = `${Date.now()}_${safeName}`;
-                const filePath = `rfq_drawings/${fileName}`;
-                const { error: uploadError } = await supabase.storage.from("drawings").upload(filePath, buffer, {
-                    contentType: file.type,
-                    upsert: false
-                });
-                if (uploadError) {
-                    console.error(`Lỗi upload file ${file.name}:`, uploadError);
-                    continue; // Bỏ qua file lỗi, tiếp tục file khác
-                }
-                const { data } = supabase.storage.from("drawings").getPublicUrl(filePath);
-                fileUrls.push(data.publicUrl);
-            }
-        }
-        // Chuyển mảng URL thành chuỗi để lưu vào DB và gửi thông báo
-        const fileUrlString = fileUrls.length > 0 ? fileUrls.join(", ") : "No file uploaded";
-        // --- 3. LƯU VÀO DATABASE ---
+        // --- LOGIC MỚI: NHẬN JSON ---
+        const body = await req.json();
+        const { companyName, contactEmail, productType, notes, requestVisitOrPrototype, fileUrl } = body;
+        // --- 1. LƯU VÀO DATABASE ---
         const { error: dbError } = await supabase.from("rfq_submissions").insert([
             {
                 company_name: companyName,
@@ -181,16 +153,17 @@ async function POST(req) {
                 product_type: productType,
                 request_visit: requestVisitOrPrototype,
                 notes: notes,
-                file_url: fileUrlString
+                file_url: fileUrl
             }
         ]);
         if (dbError) throw dbError;
-        // --- 4. GỬI TELEGRAM (Tạo danh sách link đẹp hơn) ---
+        // --- 2. GỬI TELEGRAM (Sử dụng chuỗi URL nhận được) ---
         const telegramToken = process.env.TELEGRAM_BOT_TOKEN;
         const chatId = process.env.TELEGRAM_CHAT_ID;
-        // Tạo danh sách link HTML cho Telegram
-        const fileLinksHtml = fileUrls.length > 0 ? fileUrls.map((url, i)=>`<a href="${url}">Bản vẽ ${i + 1}</a>`).join(" | ") : "Không có";
-        const telegramMsg = `<b>🔔 [YÊU CẦU BÁO GIÁ MỚI]</b>\n\n` + `<b>🏢 Công ty:</b> ${companyName}\n` + `<b>👤 Email:</b> ${contactEmail}\n` + `<b>📦 Sản phẩm:</b> ${productType}\n` + `<b>📝 Ghi chú:</b> ${notes || "Không có"}\n` + `<b>📎 File đính kèm:</b> ${fileLinksHtml}`;
+        // Tách chuỗi URL thành mảng để tạo link đẹp
+        const fileUrls = fileUrl && fileUrl !== "No file uploaded" ? fileUrl.split(", ") : [];
+        const fileLinksHtml = fileUrls.length > 0 ? fileUrls.map((url, i)=>`<a href="${url.trim()}">Bản vẽ ${i + 1}</a>`).join(" | ") : "Không có";
+        const telegramMsg = `<b>🔔 [YÊU CẦU BÁO GIÁ MỚI - FILE LỚN]</b>\n\n` + `<b>🏢 Công ty:</b> ${companyName}\n` + `<b>👤 Email:</b> ${contactEmail}\n` + `<b>📦 Sản phẩm:</b> ${productType}\n` + `<b>📝 Ghi chú:</b> ${notes || "Không có"}\n` + `<b>📎 Bản vẽ:</b> ${fileLinksHtml}`;
         await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
             method: "POST",
             headers: {
@@ -203,7 +176,7 @@ async function POST(req) {
                 disable_web_page_preview: true
             })
         });
-        // --- 5. GỬI GMAIL XÁC NHẬN ---
+        // --- 3. GỬI GMAIL XÁC NHẬN ---
         const transporter = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$nodemailer$2f$lib$2f$nodemailer$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].createTransport({
             service: "gmail",
             auth: {
@@ -225,7 +198,7 @@ async function POST(req) {
             <p><strong>Sản phẩm:</strong> ${productType}</p>
             <p><strong>Số lượng file đã gửi:</strong> ${fileUrls.length}</p>
           </div>
-          <p style="font-size: 12px; color: #666; margin-top: 20px;">※本メールは自動送信です。</p>
+          <p style="font-size: 12px; color: #666; margin-top: 20px;">※本メール là tự động gửi.</p>
         </div>
       `
         });

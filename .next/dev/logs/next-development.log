@@ -1,5 +1,5 @@
-[00:00:00.728] Server  LOG     ✓ Ready in 455ms
-[00:00:02.743] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+[00:00:00.659] Server  LOG     ✓ Ready in 388ms
+[00:00:02.409] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
 
 - A server/client branch `if (typeof window !== 'undefined')`.
 - Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
@@ -30,12 +30,12 @@ It can also happen if the client has a browser extension installed which messes 
                         <html lang="ja" className="scroll-smooth" suppressHydrationWarning={true}>
                           <body
                             className="inter_5901b7c6-module__ec5Qua__variable noto_sans_jp_acb188cd-module__7TZqra__v..."
--                           __processed_83917599-2e8b-43b2-b7fd-bdbeaa7fc380__="true"
+-                           __processed_f4efb87c-30db-4e8d-9afa-e3bfdf80f03e__="true"
 -                           bis_register="W3sibWFzdGVyIjp0cnVlLCJleHRlbnNpb25JZCI6ImVwcGlvY2VtaG1ubGJoanBsY2drb2ZjaWll..."
                           >
                   ...
 
-[00:00:03.098] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+[00:00:03.551] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
 
 - A server/client branch `if (typeof window !== 'undefined')`.
 - Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
@@ -66,46 +66,8 @@ It can also happen if the client has a browser extension installed which messes 
                         <html lang="ja" className="scroll-smooth" suppressHydrationWarning={true}>
                           <body
                             className="inter_5901b7c6-module__ec5Qua__variable noto_sans_jp_acb188cd-module__7TZqra__v..."
--                           __processed_86c93df9-9a0f-4c6b-9961-8fb8fee6af7b__="true"
+-                           __processed_a7ca5e1d-e4c0-4f60-845e-3543d07e5ac1__="true"
 -                           bis_register="W3sibWFzdGVyIjp0cnVlLCJleHRlbnNpb25JZCI6ImVwcGlvY2VtaG1ubGJoanBsY2drb2ZjaWll..."
                           >
                   ...
 
-[00:06:31.448] Server  LOG     ✓ Compiled in 219ms
-[00:06:38.756] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/" notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="layout.tsx">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <RootLayout>
-                        <html lang="ja" className="scroll-smooth" suppressHydrationWarning={true}>
-                          <body
-                            className="inter_5901b7c6-module__ec5Qua__variable noto_sans_jp_acb188cd-module__7TZqra__v..."
--                           __processed_22321e14-63bd-4f29-8733-b184d36cfa6c__="true"
--                           bis_register="W3sibWFzdGVyIjp0cnVlLCJleHRlbnNpb25JZCI6ImVwcGlvY2VtaG1ubGJoanBsY2drb2ZjaWll..."
-                          >
-                  ...
-
-[00:12:03.133] Server  LOG       Reload env: .env
