@@ -1,26 +1,11 @@
-import { google } from "googleapis";
 import { NextResponse } from "next/server";
-import admin from "firebase-admin";
+import { createClient } from "@supabase/supabase-js";
 import nodemailer from "nodemailer";
 
-// Khởi tạo Firebase Admin
-if (!admin.apps.length) {
-  const rawCredentials = JSON.parse(
-    process.env.GOOGLE_SERVICE_ACCOUNT_KEY || "{}",
-  );
-  if (rawCredentials.private_key) {
-    rawCredentials.private_key = rawCredentials.private_key.replace(
-      /\\n/g,
-      "\n",
-    );
-  }
-  admin.initializeApp({
-    credential: admin.credential.cert(rawCredentials),
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET?.replace("gs://", ""),
-  });
-}
-
-const bucket = admin.storage().bucket();
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+);
 
 export async function POST(req: Request) {
   try {
@@ -32,124 +17,127 @@ export async function POST(req: Request) {
     const requestVisitOrPrototype = formData.get(
       "requestVisitOrPrototype",
     ) as string;
-    const file = formData.get("file") as File | null;
 
-    let fileUrl = "No file uploaded";
+    // --- 1. LẤY TẤT CẢ FILE (Dùng getAll thay vì get) ---
+    const files = formData.getAll("files") as File[];
+    const fileUrls: string[] = [];
 
-    // 1. Tải file lên Firebase Storage
-    if (file && file.size > 0) {
-      const buffer = Buffer.from(await file.arrayBuffer());
-      const safeName = `${Date.now()}_${file.name.replace(/\s+/g, "_")}`;
-      const blob = bucket.file(`rfq_drawings/${safeName}`);
-      await blob.save(buffer, { contentType: file.type, public: true });
-      fileUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(blob.name)}?alt=media`;
+    // --- 2. VÒNG LẶP TẢI TỪNG FILE LÊN SUPABASE ---
+    if (files && files.length > 0) {
+      for (const file of files) {
+        if (file.size === 0) continue;
+
+        const buffer = Buffer.from(await file.arrayBuffer());
+
+        // Làm sạch tên file
+        const safeName = file.name
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-zA-Z0-9.]/g, "_")
+          .replace(/_{2,}/g, "_");
+
+        const fileName = `${Date.now()}_${safeName}`;
+        const filePath = `rfq_drawings/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("drawings")
+          .upload(filePath, buffer, {
+            contentType: file.type,
+            upsert: false,
+          });
+
+        if (uploadError) {
+          console.error(`Lỗi upload file ${file.name}:`, uploadError);
+          continue; // Bỏ qua file lỗi, tiếp tục file khác
+        }
+
+        const { data } = supabase.storage
+          .from("drawings")
+          .getPublicUrl(filePath);
+        fileUrls.push(data.publicUrl);
+      }
     }
 
-    // 2. Ghi dữ liệu vào Google Sheets
-    const rawCredentials = JSON.parse(
-      process.env.GOOGLE_SERVICE_ACCOUNT_KEY || "{}",
-    );
-    if (rawCredentials.private_key) {
-      rawCredentials.private_key = rawCredentials.private_key.replace(
-        /\\n/g,
-        "\n",
-      );
-    }
-    const auth = new google.auth.GoogleAuth({
-      credentials: rawCredentials,
-      scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-    });
-    const sheets = google.sheets({ version: "v4", auth });
-    const timestamp = new Date().toLocaleString("ja-JP", {
-      timeZone: "Asia/Tokyo",
-    });
+    // Chuyển mảng URL thành chuỗi để lưu vào DB và gửi thông báo
+    const fileUrlString =
+      fileUrls.length > 0 ? fileUrls.join(", ") : "No file uploaded";
 
-    await sheets.spreadsheets.values.append({
-      spreadsheetId: process.env.GOOGLE_SHEET_ID,
-      range: "Sheet1!A:G",
-      valueInputOption: "USER_ENTERED",
-      requestBody: {
-        values: [
-          [
-            timestamp,
-            companyName,
-            contactEmail,
-            productType,
-            requestVisitOrPrototype,
-            notes,
-            fileUrl,
-          ],
-        ],
+    // --- 3. LƯU VÀO DATABASE ---
+    const { error: dbError } = await supabase.from("rfq_submissions").insert([
+      {
+        company_name: companyName,
+        contact_email: contactEmail,
+        product_type: productType,
+        request_visit: requestVisitOrPrototype,
+        notes: notes,
+        file_url: fileUrlString, // Lưu tất cả các link cách nhau bởi dấu phẩy
       },
-    });
+    ]);
 
-    // 3. Gửi thông báo TELEGRAM cho bạn (Mẫu chuyên nghiệp)
+    if (dbError) throw dbError;
+
+    // --- 4. GỬI TELEGRAM (Tạo danh sách link đẹp hơn) ---
     const telegramToken = process.env.TELEGRAM_BOT_TOKEN;
     const chatId = process.env.TELEGRAM_CHAT_ID;
 
-    // Định dạng tin nhắn với Emoji và xuống dòng rõ ràng
-    const telegramMsg = `
-🔔 *[RFQ] Yêu cầu báo giá mới* 🔔
+    // Tạo danh sách link HTML cho Telegram
+    const fileLinksHtml =
+      fileUrls.length > 0
+        ? fileUrls
+            .map((url, i) => `<a href="${url}">Bản vẽ ${i + 1}</a>`)
+            .join(" | ")
+        : "Không có";
 
-🏢 *Công ty:* ${companyName}
-👤 *Email:* ${contactEmail}
-📦 *Sản phẩm:* ${productType}
-🛠 *Yêu cầu:* ${requestVisitOrPrototype}
-📝 *Ghi chú:* ${notes || "Không có"}
+    const telegramMsg =
+      `<b>🔔 [YÊU CẦU BÁO GIÁ MỚI]</b>\n\n` +
+      `<b>🏢 Công ty:</b> ${companyName}\n` +
+      `<b>👤 Email:</b> ${contactEmail}\n` +
+      `<b>📦 Sản phẩm:</b> ${productType}\n` +
+      `<b>📝 Ghi chú:</b> ${notes || "Không có"}\n` +
+      `<b>📎 File đính kèm:</b> ${fileLinksHtml}`;
 
-📎 *Tệp đính kèm:* [Xem tại đây](${fileUrl})
-`;
-
-    try {
-      await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: telegramMsg,
-          parse_mode: "Markdown", // Giúp in đậm và tạo link
-        }),
-      });
-    } catch (err) {
-      console.error("Telegram Error:", err);
-    }
-
-    // 4. Gửi GMAIL TIẾNG NHẬT cho khách hàng
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+    await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: telegramMsg,
+        parse_mode: "HTML",
+        disable_web_page_preview: true, // Tắt xem trước link để tin nhắn gọn hơn
+      }),
     });
 
-    try {
-      await transporter.sendMail({
-        from: `"AKAPLA Connector" <${process.env.EMAIL_USER}>`,
-        to: contactEmail,
-        subject: "【AKAPLA Connector】お見積り依頼を承りました",
-        html: `
+    // --- 5. GỬI GMAIL XÁC NHẬN ---
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    await transporter.sendMail({
+      from: `"AKAPLA" <${process.env.EMAIL_USER}>`,
+      replyTo: "info@aka-pla.com",
+      to: contactEmail,
+      subject: "【AKAPLA】お見積り依頼を承りました",
+      html: `
+        <div style="font-family: sans-serif; line-height: 1.6; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px;">
+          <h2 style="color: #1e3a8a;">AKAPLA RFQ Confirmation</h2>
           <p>${companyName} 様</p>
-          <p>この度はお見積りをご依頼いただき、誠にありがとうございます。<br>AKAPLA Connectorでございます。</p>
-          <p>以下の内容でお問い合わせを承りました。</p>
-          <hr>
-          <p><b>お問い合わせ日時:</b> ${timestamp}</p>
-          <p><b>製品種別:</b> ${productType}</p>
-          <p><b>備考:</b> ${notes || "なし"}</p>
-          <hr>
-          <p>内容を確認の上、通常48時間以内（休日を除く）に担当者よりご連絡を差し上げます。</p>
-          <p>今しばらくお待ちいただけますようお願い申し上げます。</p>
-          <br>
-          <p>--------------------------------------------------</p>
-          <p><b>AKAPLA Connector Team</b></p>
-          <p>Website: your-website.com</p>
-          <p>--------------------------------------------------</p>
-        `,
-      });
-    } catch (err) {
-      console.error("Gmail Error:", err);
-    }
+          <p>お問い合わせありがとうございます。内容を確認し、担当者よりご連絡いたします。</p>
+          <div style="background: #f9fafb; padding: 15px; border-radius: 8px;">
+            <p><strong>product:</strong> ${productType}</p>
+            <p><strong>Number of files sent:</strong> ${fileUrls.length}</p>
+          </div>
+          <p style="font-size: 12px; color: #666; margin-top: 20px;">※本メールは自動送信です。</p>
+        </div>
+      `,
+    });
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error("Critical Error:", error);
+    console.error("Server Error:", error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 },

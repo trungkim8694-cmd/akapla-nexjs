@@ -119,12 +119,12 @@ module.exports = [
         },
         rfq: {
           title: "お見積り依頼",
-          desc: "無料評価のために技術図面（PDF/CAD）をお送りください。弊社のブリッジエンジニアが48時間以内に回答いたします。",
+          desc: "無料評価のために技術図面（PDF, DWG, DXF, STEP, STP, JPG, JPEG, PNG）をお送りください。弊社のブリッジエンジニアが48時間以内に回答いたします。",
           labels: {
             company: "会社名",
             email: "連絡先メールアドレス",
             category: "製品カテゴリ",
-            file: "技術図面 (PDF/CAD, 最大1GB)",
+            file: "技術図面 (PDF, DWG, DXF, STEP, STP, JPG, JPEG, PNG, 最大1GB)",
             notes: "特別な要件 / 備考",
             visitRequest: "工場見学・試作の希望",
             nda: "秘密保持契約 (NDA) に同意します。",
@@ -267,12 +267,12 @@ module.exports = [
         },
         rfq: {
           title: "Request for Quote",
-          desc: "Send us your technical drawings (PDF/CAD) for a free evaluation. Our engineers will respond within 48 hours.",
+          desc: "Send us your technical drawings (PDF, DWG, DXF, STEP, STP, JPG, JPEG, PNG) for a free evaluation. Our engineers will respond within 48 hours.",
           labels: {
             company: "Company Name",
             email: "Contact Email",
             category: "Product Category",
-            file: "Technical Drawing (PDF/CAD, Max 1GB)",
+            file: "Technical Drawing (PDF, DWG, DXF, STEP, STP, JPG, JPEG, PNG, Max 1GB)",
             notes: "Special Requirements / Notes",
             visitRequest: "Request Factory Visit/Prototype",
             nda: "I agree to the confidentiality terms (NDA).",
@@ -416,12 +416,12 @@ module.exports = [
         },
         rfq: {
           title: "Yêu cầu báo giá",
-          desc: "Gửi bản vẽ kỹ thuật (PDF/CAD) để được đánh giá miễn phí. Kỹ sư của chúng tôi sẽ phản hồi trong vòng 48 giờ.",
+          desc: "Gửi bản vẽ kỹ thuật (PDF, DWG, DXF, STEP, STP, JPG, JPEG, PNG) để được đánh giá miễn phí. Kỹ sư của chúng tôi sẽ phản hồi trong vòng 48 giờ.",
           labels: {
             company: "Tên công ty",
             email: "Email liên hệ",
             category: "Danh mục sản phẩm",
-            file: "Bản vẽ kỹ thuật (PDF/CAD, Tối đa 1GB)",
+            file: "Bản vẽ kỹ thuật (PDF, DWG, DXF, STEP, STP, JPG, JPEG, PNG, Tối đa 1GB)",
             notes: "Yêu cầu đặc biệt / Ghi chú",
             visitRequest: "Yêu cầu thăm xưởng / Làm mẫu thử",
             nda: "Tôi đồng ý với các điều khoản bảo mật (NDA).",
