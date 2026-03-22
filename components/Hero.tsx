@@ -12,7 +12,7 @@ const Hero: React.FC<Props> = ({ lang }) => {
     <div className="relative h-[90vh] flex items-center overflow-hidden">
       <div className="absolute inset-0 z-0">
         <img
-          src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop"
+          src="/intro-bg.png"
           alt="Modern industrial facility"
           className="w-full h-full object-cover brightness-[0.4]"
         />
@@ -39,14 +39,23 @@ const Hero: React.FC<Props> = ({ lang }) => {
             </a>
             <a
               href="/company-profile.pdf" // Thay bằng link file của bạn
-              download="Akapla_Company_Profile.pdf"                
+              download="Akapla_Company_Profile.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-3 px-10 py-4 bg-white text-blue-900 font-bold rounded-lg text-center hover:bg-slate-100 transition-colors w-full md:max-w-xs"
             >
               {/* Icon PDF - Màu đỏ nổi bật trên nền trắng */}
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-600" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-red-600"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
+                  clipRule="evenodd"
+                />
               </svg>
               {t.btnService}
             </a>
@@ -55,7 +64,7 @@ const Hero: React.FC<Props> = ({ lang }) => {
       </div>
 
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce hidden md:block">
-        <div className="w-1 h-12 bg-gradient-to-b from-white to-transparent rounded-full"></div>
+        <div className="w-1 h-12 bg-linear-to-b from-white to-transparent rounded-full"></div>
       </div>
     </div>
   );

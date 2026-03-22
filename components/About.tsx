@@ -25,7 +25,7 @@ const About: React.FC<Props> = ({ lang }) => {
           <div className="space-y-6 mb-10">
             {t.points.map((item, idx) => (
               <div key={idx} className="flex gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center text-blue-900 font-bold">
+                <div className="shrink-0 w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center text-blue-900 font-bold">
                   0{idx + 1}
                 </div>
                 <div>
