@@ -122,7 +122,7 @@ const Network: React.FC<Props> = ({ lang }) => {
 
         <div className="mt-20 relative rounded-3xl overflow-hidden h-64 shadow-inner">
           <img
-            src="/intro-bg.png"
+            src="/akapla.png"
             alt="Factory Floor"
             className="w-full h-full object-cover opacity-80 brightness-[0.7]"
           />
