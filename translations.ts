@@ -88,7 +88,7 @@ export const translations = {
         {
           number: 5,
           title: "契約締結・着金",
-          desc: "法的・技術的条件を確定。前払金（50%）を決済し生産開始。",
+          desc: "法的・技術的条件を確定。",
         },
         {
           number: 6,
@@ -98,7 +98,7 @@ export const translations = {
         {
           number: 7,
           title: "納品・決済",
-          desc: "最終検査合格後、納品と残金（50%）の精算。",
+          desc: "最終検査合格後、納品と精算。",
         },
       ],
     },
